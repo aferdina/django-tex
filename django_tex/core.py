@@ -7,7 +7,7 @@ from django.template.loader import get_template
 from django_tex.exceptions import TexError
 from django.conf import settings
 
-DEFAULT_INTERPRETER = "lualatex"
+DEFAULT_INTERPRETER = "pdflatex"
 
 
 def run_tex(source, template_name=None):
@@ -21,8 +21,16 @@ def run_tex_in_directory(source, directory, template_name=None):
     latex_interpreter_options = getattr(settings, "LATEX_INTERPRETER_OPTIONS", "")
     with open(os.path.join(directory, filename), "x", encoding="utf-8") as f:
         f.write(source)
-    args = f"{command} -interaction=batchmode {latex_interpreter_options} {filename}"
+    args = f"{command} {latex_interpreter_options} {filename} -pdf"
     try:
+        run(
+            args,
+            shell=True,
+            stdout=PIPE,
+            stderr=PIPE,
+            check=True,
+            cwd=directory,
+        )
         run(
             args,
             shell=True,
@@ -33,8 +41,9 @@ def run_tex_in_directory(source, directory, template_name=None):
         )
     except CalledProcessError as called_process_error:
         try:
+            #FIXME: This stupidity is not working for me 
             with open(
-                os.path.join(directory, "texput.log"), "r", encoding="utf-8"
+                os.path.join(directory, "texput.log"), "r", encoding="latin-1"
             ) as f:
                 log = f.read()
         except FileNotFoundError:
