@@ -31,14 +31,14 @@ def run_tex_in_directory(source, directory, template_name=None):
             check=True,
             cwd=directory,
         )
-        run(
-            args,
-            shell=True,
-            stdout=PIPE,
-            stderr=PIPE,
-            check=True,
-            cwd=directory,
-        )
+        # run(
+        #     args,
+        #     shell=True,
+        #     stdout=PIPE,
+        #     stderr=PIPE,
+        #     check=True,
+        #     cwd=directory,
+        # )
     except CalledProcessError as called_process_error:
         try:
             #FIXME: This stupidity is not working for me 
